@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 	"github.com/xeb/golangfun/libfun"
+	"github.com/xeb/golangfun/channels"
 )
 
 func main() {
@@ -12,4 +13,7 @@ func main() {
 
 	account := &libfun.Account{1, "test", time.Now()}
 	fmt.Println(account.String())
+
+	channels.TimeoutExample()
+	// channels.FixedMessagePump()
 }
