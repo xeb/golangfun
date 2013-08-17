@@ -3,12 +3,26 @@ package main
 import (
 	"fmt"
 	"time"
+	"flag"
 	"github.com/xeb/golangfun/libfun"
 	"github.com/xeb/golangfun/channels"
 )
 
+
+var flagparam bool
+
+func init() {
+	flag.BoolVar(&flagparam, "flagparam", false, "Flag Parameter")
+	flag.Parse()
+}
+
 func main() {
 
+	if flagparam {
+		fmt.Println("Flagparam is set")
+	}
+
+	libfun.TestPointer()
 	libfun.Hello()
 
 	isFun := libfun.HaveFun()

@@ -29,3 +29,34 @@ func (o Office) String() string {
 func Hello() {
 	fmt.Printf("Hello, %s\n", Boston)
 }
+
+func TestPointer() {
+    var c *int = getPtr()
+    fmt.Println("------")
+	fmt.Printf("c Address is 0x%x\n", c)
+    fmt.Printf("c Value is %d\n", *c)
+    fmt.Printf("Address of c value is 0x%x\n", &c)
+	fmt.Println("------")
+
+    *c = 125
+    fmt.Println("------")
+	fmt.Printf("c Address is 0x%x\n", c)
+    fmt.Printf("c Value is %d\n", *c)
+    fmt.Printf("Address of c value is 0x%x\n", &c)
+    fmt.Println("------")
+
+    var d int = 130
+    c = &d
+    fmt.Println("------")
+	fmt.Printf("c Address is 0x%x\n", c)
+    fmt.Printf("c Value is %d\n", *c)
+    fmt.Printf("Address of c value is 0x%x\n", &c)
+	fmt.Println("------")
+
+}
+
+func getPtr() *int {
+    var a int = 123
+    var b *int = &a
+    return b
+}
