@@ -16,8 +16,9 @@ func TestAddItem(t *testing.T) {
 	key := "test123"
 	account := &Account{123, "test"}
 
-	lrucache.Add(key, account)
-	account2 := lrucache.Get(key).(*Account)
+	cache := lrucache.Default()
+	cache.Add(key, account)
+	account2 := cache.Get(key).(*Account)
 
 	if &account2.id != &account.id {
 		fmt.Printf("&account.id == %x vs &account2.id == %x", &account.id, &account2.id)
@@ -26,7 +27,7 @@ func TestAddItem(t *testing.T) {
 	
 	time.Sleep(10 * time.Second)
 
-	lrucache.Purge()
+	cache.Purge()
 
-	t.Fatal("Done!")
+	// t.Fatal("Done!")
 }
