@@ -47,8 +47,6 @@ func (cache *LRUCache) Get(key string) (itemValue interface{}) {
 		}()
 		return item.value
 	}
-
-	defer func() { cache.Evict() }() 
 	return nil
 }
 
