@@ -33,28 +33,32 @@ func main() {
 
 func cacheSample() {
 
-	cache := lrucache.Default()
+	cache := lrucache.New(10)
 
-	key := "test123"
-	account := &Account{123, "test"}
+	var account0 *Account
+	for i := 0; i < 12; i++ {
+		key := fmt.Sprintf("test%d", i)
+		account := &Account{i, key}
+		if i == 0 { account0 = account }
+		cache.Add(key, account)
+		fmt.Printf("Account %s added to cache\n", key)
 
-	cache.Add(key, account)
-	fmt.Println("Account added to cache")
-
-	fmt.Println("Account retrieved from cache")
-	account2 := cache.Get(key).(*Account)
-
-	if &account2.id != &account.id {
-		fmt.Printf("&account.id == %x vs &account2.id == %x", &account.id, &account2.id)
-	} else {
-		fmt.Println("Addresses of account.id match")
+		// Keep getting account0 and account1 to keep in the cache
+		cache.Get("test0")
+		cache.Get("test1")
 	}
 
-	fmt.Println("Sleeping for 10 seconds")
-	time.Sleep(10 * time.Second)
+	account0b := cache.Get("test0").(*Account)
+	fmt.Println("Account0 retrieved from cache")
 
-	fmt.Println("Manually purging")
-	cache.Purge()
+	if &account0b.id != &account0.id {
+		fmt.Printf("&account0.id == %x vs &account0b.id == %x\n", &account0.id, &account0b.id)
+	} else {
+		fmt.Println("Addresses of account0.id match!!")
+	}
+
+	fmt.Println("Manually evicting")
+	cache.Evict()
 }
 
 func libfunSample() {

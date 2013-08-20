@@ -1,53 +1,66 @@
+// A rudimentary implementation of an LRUcache in Go
 package lrucache
 
 import (
-	"time"
+	// "time"
 	"fmt"
+	"container/list"
 )
 
 type cacheItem struct {
+	key string
 	value interface{}
-	timeExpire int64
-	timeLastUsed int64
 }
 
 type LRUCache struct {
-	expireTime time.Duration
-	maxMemory uint64
+	maxItems int
 	cacheItems map[string]cacheItem
+	listItems *list.List
 }
 
+// Creates a default LRU cache for 1000 items
 func Default() *LRUCache {
-	return New(time.Second * 2, 1024^2)
+	return New(1000)
 }
 
-func New(expireTime time.Duration, maxMemory uint64) *LRUCache {
-	return &LRUCache{expireTime, maxMemory, make(map[string]cacheItem)}
+func New(maxItems int) *LRUCache {
+	return &LRUCache{maxItems, make(map[string]cacheItem), list.New()}
 }
 
 func (cache *LRUCache) Add(key string, value interface{}) {
-	go func() { cache.Purge() }() 
-	item := &cacheItem{value, time.Now().Add(cache.expireTime).Unix(), time.Now().Unix() }
+	defer func() { cache.Evict() }() 
+	item := &cacheItem{key, value}
 	cache.cacheItems[key] = *item
+	cache.listItems.PushFront(*item)
 }
 
 func (cache *LRUCache) Get(key string) (itemValue interface{}) {
-	go func() { cache.Purge() }() 
 	item, exists := cache.cacheItems[key]
 	if exists {
-		item.timeLastUsed = time.Now().Unix()
+		defer func() { 
+			for e := cache.listItems.Front(); e != nil; e = e.Next() {
+				if e.Value.(cacheItem).key == key {
+					cache.listItems.MoveToFront(e)		
+					break
+				}
+			}
+		}()
 		return item.value
-	} else {
-		return nil
 	}
+
+	defer func() { cache.Evict() }() 
+	return nil
 }
 
-func (cache *LRUCache) Purge() { // TODO: make private
-	// Remove expired items
-	for key, value := range cache.cacheItems {
-		if time.Now().Add(cache.expireTime * -1).Unix() >= value.timeExpire {
-			fmt.Printf("Expiring %s with value %s\n", key, value)
-		}
+// purge will remove expired items first and then purge the LRU items 
+//  until the length of the map equals the configuration in the cache instance
+func (cache *LRUCache) Evict() { 
+	for len(cache.cacheItems) > cache.maxItems {
+		lastEle := cache.listItems.Back()
+		if lastEle == nil { return }
+
+		fmt.Printf("Removing %s\n", lastEle.Value.(cacheItem))
+		delete(cache.cacheItems, lastEle.Value.(cacheItem).key)
+		cache.listItems.Remove(lastEle)
 	}
-	// TODO: remove items until below memory threshold
 }
