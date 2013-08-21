@@ -2,7 +2,6 @@
 package lrucache
 
 import (
-	// "time"
 	"fmt"
 	"container/list"
 )

@@ -7,6 +7,7 @@ import (
 	"github.com/xeb/golangfun/libfun"
 	"github.com/xeb/golangfun/lrucache"
 	"github.com/xeb/golangfun/channels"
+	"github.com/xeb/golangfun/httpproxy"
 )
 
 type Account struct {
@@ -14,21 +15,29 @@ type Account struct {
 	name string
 }
 
+var httpProxyEnabled bool
 var cacheEnabled bool
 var channelsEnabled bool
 var libfunEnabled bool
 
 func init() {
-	flag.BoolVar(&cacheEnabled, "cache", true, "Run a LRU Cache sample")
+	flag.BoolVar(&httpProxyEnabled, "httpproxy", true, "Runs an HTTP Proxy")
+	flag.BoolVar(&cacheEnabled, "cache", false, "Run a LRU Cache sample")
 	flag.BoolVar(&channelsEnabled, "channels", false, "Run a Channels sample")
 	flag.BoolVar(&libfunEnabled, "libfun", false, "Run some 'libfun' sample")
 	flag.Parse()
 }
 
 func main() {
+	if httpProxyEnabled { httpProxySample() }
 	if cacheEnabled { cacheSample() }
 	if libfunEnabled { libfunSample() }
 	if channelsEnabled { channelSample() }
+}
+
+func httpProxySample() {
+	fmt.Println("Starting httpproxy server...")
+	httpproxy.Start()
 }
 
 func cacheSample() {
