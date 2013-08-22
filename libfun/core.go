@@ -11,6 +11,7 @@ func (a *Account) String() (s string) {
 	return s
 }
 
+// var sampleMap map[string][]string
 
 // Constant
 var officePlace []string = []string{"Boston", "New York"}

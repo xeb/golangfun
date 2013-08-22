@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"time"
 	"flag"
-	"github.com/xeb/golangfun/libfun"
-	"github.com/xeb/golangfun/lrucache"
+	"fmt"
 	"github.com/xeb/golangfun/channels"
 	"github.com/xeb/golangfun/httpproxy"
+	"github.com/xeb/golangfun/libfun"
+	"github.com/xeb/golangfun/lrucache"
+	"time"
 )
 
 type Account struct {
-	id int
+	id   int
 	name string
 }
 
@@ -29,10 +29,18 @@ func init() {
 }
 
 func main() {
-	if httpProxyEnabled { httpProxySample() }
-	if cacheEnabled { cacheSample() }
-	if libfunEnabled { libfunSample() }
-	if channelsEnabled { channelSample() }
+	if httpProxyEnabled {
+		httpProxySample()
+	}
+	if cacheEnabled {
+		cacheSample()
+	}
+	if libfunEnabled {
+		libfunSample()
+	}
+	if channelsEnabled {
+		channelSample()
+	}
 }
 
 func httpProxySample() {
@@ -48,7 +56,9 @@ func cacheSample() {
 	for i := 0; i < 12; i++ {
 		key := fmt.Sprintf("test%d", i)
 		account := &Account{i, key}
-		if i == 0 { account0 = account }
+		if i == 0 {
+			account0 = account
+		}
 		cache.Add(key, account)
 		fmt.Printf("Account %s added to cache\n", key)
 
