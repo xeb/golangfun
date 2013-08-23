@@ -7,7 +7,7 @@ This project is meant to serve as an example of various things within Go.  It wa
 * Self-hosting presentation
 * Self-hosting dynamically run examples
 * map example
-* interface example (w/ cars or something)
+* ~~interface example (w/ cars or something)~~
 * debugging w/ GDB
 * godoc?
 * gofmt
