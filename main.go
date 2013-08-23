@@ -16,12 +16,14 @@ type Account struct {
 }
 
 var httpProxyEnabled bool
+var interfacesEnabled bool
 var cacheEnabled bool
 var channelsEnabled bool
 var libfunEnabled bool
 
 func init() {
-	flag.BoolVar(&httpProxyEnabled, "httpproxy", true, "Runs an HTTP Proxy")
+	flag.BoolVar(&httpProxyEnabled, "httpproxy", false, "Runs an HTTP Proxy")
+	flag.BoolVar(&interfacesEnabled, "interfaces", true, "Runs an example about interfaces")
 	flag.BoolVar(&cacheEnabled, "cache", false, "Run a LRU Cache sample")
 	flag.BoolVar(&channelsEnabled, "channels", false, "Run a Channels sample")
 	flag.BoolVar(&libfunEnabled, "libfun", false, "Run some 'libfun' sample")
@@ -29,6 +31,9 @@ func init() {
 }
 
 func main() {
+	if interfacesEnabled {
+		interfacesSample()
+	}
 	if httpProxyEnabled {
 		httpProxySample()
 	}
@@ -41,6 +46,24 @@ func main() {
 	if channelsEnabled {
 		channelSample()
 	}
+}
+
+func interfacesSample() {
+	car := libfun.NewCar()
+	fmt.Printf("Car==%s\n", car)
+	car.PeddleToTheMetal()
+	fmt.Println()
+
+	truck := libfun.NewTruck()
+	fmt.Printf("Truck==%s\n", truck)
+	truck.PeddleToTheMetal()
+	fmt.Println()
+
+	fmt.Printf("Calling PunchIt on Car...\n")
+	libfun.PunchIt(car)
+
+	fmt.Printf("Calling PunchIt on Truck...\n")
+	libfun.PunchIt(truck)
 }
 
 func httpProxySample() {
