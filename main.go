@@ -7,6 +7,7 @@ import (
 	"github.com/xeb/golangfun/httpproxy"
 	"github.com/xeb/golangfun/libfun"
 	"github.com/xeb/golangfun/lrucache"
+	"github.com/xeb/golangfun/presentation"
 	"time"
 )
 
@@ -15,6 +16,7 @@ type Account struct {
 	name string
 }
 
+var presentationEnabled bool
 var httpProxyEnabled bool
 var interfacesEnabled bool
 var cacheEnabled bool
@@ -22,8 +24,9 @@ var channelsEnabled bool
 var libfunEnabled bool
 
 func init() {
+	flag.BoolVar(&presentationEnabled, "presentation", true, "Runs the presentation")
 	flag.BoolVar(&httpProxyEnabled, "httpproxy", false, "Runs an HTTP Proxy")
-	flag.BoolVar(&interfacesEnabled, "interfaces", true, "Runs an example about interfaces")
+	flag.BoolVar(&interfacesEnabled, "interfaces", false, "Runs an example about interfaces")
 	flag.BoolVar(&cacheEnabled, "cache", false, "Run a LRU Cache sample")
 	flag.BoolVar(&channelsEnabled, "channels", false, "Run a Channels sample")
 	flag.BoolVar(&libfunEnabled, "libfun", false, "Run some 'libfun' sample")
@@ -31,6 +34,9 @@ func init() {
 }
 
 func main() {
+	if presentationEnabled {
+		presentationSample()
+	}
 	if interfacesEnabled {
 		interfacesSample()
 	}
@@ -46,6 +52,11 @@ func main() {
 	if channelsEnabled {
 		channelSample()
 	}
+}
+
+func presentationSample() {
+	fmt.Println("Starting up presentation!")
+	presentation.Start()
 }
 
 func interfacesSample() {

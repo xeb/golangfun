@@ -15,3 +15,5 @@ This project is meant to serve as an example of various things within Go.  It wa
 * CapitalLetters and scope
 * Receiver-based methods
 * Structs / Pointers
+* Undefined interface as a parameter, func SomeFunction(w interface{Write(string)}){
+* Logging
