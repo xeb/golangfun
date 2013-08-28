@@ -9,6 +9,7 @@ import (
 	"github.com/xeb/golangfun/libfun"
 	"github.com/xeb/golangfun/lrucache"
 	"github.com/xeb/golangfun/presentation"
+	"sync"
 	"time"
 )
 
@@ -18,6 +19,7 @@ type Account struct {
 }
 
 var presentationEnabled bool
+var semaphoreEnabled bool
 var linkedListEnabled bool
 var httpProxyEnabled bool
 var interfacesEnabled bool
@@ -27,7 +29,8 @@ var libfunEnabled bool
 
 func init() {
 	flag.BoolVar(&presentationEnabled, "presentation", false, "Runs the presentation")
-	flag.BoolVar(&linkedListEnabled, "linkedlist", true, "Runs a linked list example")
+	flag.BoolVar(&semaphoreEnabled, "semaphore", false, "Runs a semaphore example")
+	flag.BoolVar(&linkedListEnabled, "linkedlist", false, "Runs a linked list example")
 	flag.BoolVar(&httpProxyEnabled, "httpproxy", false, "Runs an HTTP Proxy")
 	flag.BoolVar(&interfacesEnabled, "interfaces", false, "Runs an example about interfaces")
 	flag.BoolVar(&cacheEnabled, "cache", false, "Run a LRU Cache sample")
@@ -39,6 +42,9 @@ func init() {
 func main() {
 	if presentationEnabled {
 		presentationSample()
+	}
+	if semaphoreEnabled {
+		semaphoreSample()
 	}
 	if linkedListEnabled {
 		linkedListSample()
@@ -145,6 +151,53 @@ func cacheSample() {
 
 	fmt.Println("Manually evicting")
 	cache.Evict()
+}
+
+// see: https://github.com/abiosoft/semaphore/blob/master/semaphore_test.go
+// NOTE THIS DOES NOT WORK!
+func semaphoreSample() {
+
+	waitGroup := &sync.WaitGroup{}
+	semaphore := channels.NewSemaphore(10)
+	fmt.Println("Semaphore created")
+	limit := 2
+
+	for i := 0; i < limit; i++ {
+		fmt.Printf("Tick of %d\n", i)
+		waitGroup.Add(1) // this is so we can wait for the semaphore locks
+		go func(s *channels.Semaphore, j int) {
+
+			fmt.Printf("Waiting...%d of %d\n", j, s.AvailablePermits())
+			semaphore.AcquireMany(j)
+			fmt.Printf("Started acquiring %d locks of %d\n", j, s.AvailablePermits())
+			// time.Sleep(time.Second * 3)
+			semaphore.ReleaseMany(i)
+			fmt.Println("Done...", i, " ", s.AvailablePermits())
+			waitGroup.Done()
+
+		}(semaphore, i)
+	}
+
+	// go func() {
+	// 	waitGroup.Add(1)
+	// 	if semaphore.AcquireWithin(5, time.Second*3) {
+	// 		semaphore.ReleaseMany(5)
+	// 		fmt.Println("Acquired within 3 seconds")
+	// 	} else {
+	// 		fmt.Println("Acquire timed out... so sorry")
+	// 	}
+	// 	waitGroup.Done()
+	// }()
+
+	fmt.Println("Calling waitGroup.Wait()")
+	waitGroup.Wait()
+
+	if n := semaphore.DrainPermits(); n != 10 {
+		semaphore.ReleaseMany(n)
+	} else {
+		semaphore.ReleaseMany(10)
+	}
+	fmt.Println("ALL DONE!")
 }
 
 func libfunSample() {

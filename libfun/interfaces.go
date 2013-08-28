@@ -8,18 +8,12 @@ type Make int
 
 var makeStrings []string = []string{"Honda", "Nissan", "Tesla"}
 
-const (
-	Honda  = 0
-	Nissan = 1
-	Tesla  = 2
-)
-
 // This is better:
-// const (
-// 	Honda Make = iota
-// 	Nissan
-// 	Tesla
-// )
+const (
+	Honda = iota
+	Nissan
+	Tesla
+)
 
 func (m Make) String() string {
 	return makeStrings[m]
