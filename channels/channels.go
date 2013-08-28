@@ -23,7 +23,6 @@ func SimpleChanValue() (value int) {
 
 
 func FixedMessagePump() {
-	
 	fmt.Println("Starting...")
 	messagePump := make(chan string)
 
