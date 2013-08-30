@@ -27,6 +27,7 @@
 				color: #000;
 				font-size: 16px !important;
 				overflow: auto;
+				position: relative
 			}
 			pre .system {
 				color: #375eab;
@@ -37,6 +38,8 @@
 			pre .delay {
 				font-size: 10px;
 				color: #ccc;
+				position: absolute;
+				right: 10px;
 			}
 			span.hint, span.cite, a.cite {
 				font-size: 18px;
@@ -152,7 +155,7 @@ func main() {
 
 
 
-	sleepDuration = 30 * time.Hour * 24
+	sleepDuration = (30 * time.Hour * 24) + (7 * time.Minute) + (4 * time.Second)
 	fmt.Printf("sleepDuration is now %s", sleepDuration)
 }
 </textarea>
@@ -196,6 +199,20 @@ func main() {
 				</section>
 				<section>
 					<h2>For and Switch</h2>
+<textarea style="height: 250px">
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i &lt; 10; i++ {
+		fmt.Printf("i is %d", i)
+	}
+}
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<button class="runbtn">Run</button>
 				</section>
 				<section>
 					<h2>Error Type and _ </h2>
@@ -394,8 +411,8 @@ func g(i int) {
 								for(var e in d["Events"]) {
 									var msg = d["Events"][e]["Message"];
 									var delay = d["Events"][e]["Delay"] / 1000 / 1000;
-									html += '<span class="message">' + msg + '</span><br/>';
-									html += '<span class="delay">' + delay + 'ms</span><br/><br/>';
+									html += '<span class="message">' + msg + '</span>';
+									html += '<span class="delay">' + delay + 'ms</span><br/>';
 								}
 								$(pre).html(html);
 							}
