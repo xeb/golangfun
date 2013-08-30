@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 var templatePath = "./presentation/index.html"
@@ -15,7 +16,12 @@ var port int = 8093
 var contentMux = http.NewServeMux()
 
 type Presentation struct {
-	Name string
+	TimeValue time.Time
+	Time      string
+}
+
+func (p *Presentation) getTime() string {
+	return p.TimeValue.Format("Jan 2 2006") // this is just magically awesome; see: http://golang.org/pkg/time/#pkg-constants
 }
 
 func Start() {
@@ -49,7 +55,8 @@ func handleRootReq(w http.ResponseWriter) {
 		fmt.Fprintf(w, "ERROR %s", err)
 		return
 	}
-	p := Presentation{Name: "TESTNAME"}
+	p := Presentation{TimeValue: time.Now()}
+	p.Time = p.getTime() // I don't like this but haven't figured out Template.Funcs yet
 	err = t.Execute(w, p)
 	if err != nil {
 		fmt.Fprintf(w, "ERROR %s", err)

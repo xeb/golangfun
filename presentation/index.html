@@ -10,6 +10,7 @@
 
 		<link rel="stylesheet" href="css/reveal.min.css">
 		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="css/jquery-linedtextarea.css" id="theme">
 		<style type="text/css">
 			html.start .state-background {
 				background: url(img/gopher.png) 70px 400px no-repeat;
@@ -20,8 +21,8 @@
 			}
 			textarea, pre {
 				font-family: 'Lucida Grande' !important;
-				width: 90%;
 				padding: 10px !important;
+				width: 90%;
 			}
 			textarea {
 				background: #FFFFD8;
@@ -55,6 +56,14 @@
 				border-bottom-right-radius: 5px;
 				cursor: pointer;
 				background: #fff;
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: -moz-none;
+				-ms-user-select: none;
+				user-select: none;
+				float: right;
+				margin-right: 35px;
 			}
 			.small {
 				font-size: 14px !important;
@@ -82,7 +91,8 @@
 					<h1>Go!</h1>
 					<h3>(or <a href="http://golang.org" style="line-height: 0.9;">golang</a>)</h3>
 					<p>
-						<small>Mark Kockerbeck</small>
+						<small>Mark Kockerbeck</small><br/>
+						<small>{{.Time}}</small>
 					</p>
 				</section>
 				<section>
@@ -103,19 +113,18 @@
 					<section>
 						<h2>Hello Go!</h2>
 <textarea style="height: 290px">
-package main
+package main;
 
-import "fmt"
+import "fmt";
 
 func main() {
-	var department string
-	department = "Corp Apps"
-	fmt.Printf("Hello %s!", department)
+	var department string;
+	department = "Corp Apps";
+	fmt.Printf("Hello %s!", department);
 }
 </textarea>
 <pre style="height: 100px;">
 </pre>
-<br/>
 <button class="runbtn">Run</button>
 					</section>
 					<section>
@@ -129,39 +138,26 @@ import (
 )
 
 func main() {
+
 	department := "Corp Apps"
-	time.Sleep(12 * time.Millisecond)
-	fmt.Printf("Hello %s!", department)
-	time.Sleep(15 * time.Millisecond)
-	fmt.Printf("Hello Again %s!", department)
+	var sleepDuration time.Duration = 12
+	time.Sleep(sleepDuration * time.Millisecond)
+	fmt.Printf("Hello %s! I slept for %dms", department, sleepDuration)
+
+
+
+	sleepDuration = 15
+	time.Sleep(sleepDuration * time.Millisecond)
+	fmt.Printf("Hello Again %s! I slept for %s", department, sleepDuration)
+
+
+
+	sleepDuration = 30 * time.Hour * 24
+	fmt.Printf("sleepDuration is now %s", sleepDuration)
 }
 </textarea>
 <pre style="height: 100px;">
 </pre>
-<br/>
-<button class="runbtn">Run</button>
-					</section>
-					<section>
-						<h2>Variables</h2>
-<textarea style="height: 290px">
-package main
-
-import (
-	"fmt"
-	"time"
-)
-
-func main() {
-	var department string = "Corp Apps"
-	time.Sleep(12 * time.Millisecond)
-	fmt.Printf("Hello %s!", department)
-	time.Sleep(15 * time.Millisecond)
-	fmt.Printf("Hello Again %s!", department)
-}
-</textarea>
-<pre style="height: 100px;">
-</pre>
-<br/>
 <button class="runbtn">Run</button>
 					</section>
 				</section>
@@ -176,6 +172,7 @@ func main() {
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.min.js"></script>
+		<script src="js/jquery-linedtextarea.js"></script>
 
 		<script>
 
@@ -205,42 +202,62 @@ func main() {
 
 		</script>
 		<script>
-			document.runGo = function(ele) {
-				var btn = $(ele);
-				btn.attr('disabled', 'disabled');
-				btn.val('...');
-
-				var pre = btn.parent().find('pre');
-				pre.html('...');
-				var val = btn.parent().find('textarea').val();
-				$.ajax({
-					url: '/compile',
-					type: 'POST',
-					dataType: 'json',
-					data: { version: '2', body: val },
-					success: function(d) {
-						var errors = d["Errors"];
-						if (errors !== undefined && errors != '') {
-							$(pre).html('<span class="error">' + errors + '</span>');
-						} else {
-							var html = '';
-							for(var e in d["Events"]) {
-								var msg = d["Events"][e]["Message"];
-								var delay = d["Events"][e]["Delay"] / 1000 / 1000;
-								html += '<span class="message">' + msg + '</span><br/>';
-								html += '<span class="delay">' + delay + 'ms</span><br/><br/>';
-							}
-							$(pre).html(html);
-						}
-						btn.removeAttr('disabled', 'disabled');
-						btn.val('Run');
-					}
-				});				
-			}
 			$(function() {
-				$('.runbtn').on("click", function() {
-					document.runGo($(this));
+				$("textarea").keydown(function(e) {
+				    if(e.keyCode === 9) { // tab was pressed
+				        // get caret position/selection
+				        var start = this.selectionStart;
+				        var end = this.selectionEnd;
+
+				        var $this = $(this);
+				        var value = $this.val();
+
+				        // set textarea value to: text before caret + tab + text after caret
+				        $this.val(value.substring(0, start)
+				                    + "\t"
+				                    + value.substring(end));
+
+				        // put caret at right position again (add one for the tab)
+				        this.selectionStart = this.selectionEnd = start + 1;
+
+				        // prevent the focus lose
+				        e.preventDefault();
+				    }
 				})
+				//.linedtextarea()
+				;				
+				$('.runbtn').on("click", function() {
+					var btn = $(this);
+					btn.attr('disabled', 'disabled');
+					btn.val('...');
+
+					var pre = btn.parent().find('pre');
+					pre.html('...');
+					var val = btn.parent().find('textarea').val();
+					$.ajax({
+						url: '/compile',
+						type: 'POST',
+						dataType: 'json',
+						data: { version: '2', body: val },
+						success: function(d) {
+							var errors = d["Errors"];
+							if (errors !== undefined && errors != '') {
+								$(pre).html('<span class="error">' + errors + '</span>');
+							} else {
+								var html = '';
+								for(var e in d["Events"]) {
+									var msg = d["Events"][e]["Message"];
+									var delay = d["Events"][e]["Delay"] / 1000 / 1000;
+									html += '<span class="message">' + msg + '</span><br/>';
+									html += '<span class="delay">' + delay + 'ms</span><br/><br/>';
+								}
+								$(pre).html(html);
+							}
+							btn.removeAttr('disabled', 'disabled');
+							btn.val('Run');
+						}
+					});			
+				});
 			});
 		</script>
 
