@@ -16,9 +16,7 @@
 				background: url(img/gopher.png) 70px 400px no-repeat;
 				background-size: 400px;
 			}
-			html { 
-				background: #000;
-			}
+			
 			textarea, pre {
 				font-family: 'Lucida Grande' !important;
 				padding: 10px !important;
@@ -43,6 +41,10 @@
 			pre .delay {
 				font-size: 10px;
 				color: #ccc;
+			}
+			span.hint, span.cite, a.cite {
+				font-size: 18px;
+				font-weight: normal;
 			}
 			.runbtn {		
 				border: 2px solid #375EAB;
@@ -92,25 +94,23 @@
 					<h3>(or <a href="http://golang.org" style="line-height: 0.9;">golang</a>)</h3>
 					<p>
 						<small>Mark Kockerbeck</small><br/>
-						<small>{{.Time}}</small>
+						<small>{{.Time}}</small><br/>
+						<small><a href="http://github.com/xeb/golangfun">github.com/xeb/golangfun</a></small>
 					</p>
 				</section>
 				<section>
 					<h2>Why?</h2>
 					<ul>
 						<li><a href="http://wcs.battle.net/">wcs.battle.net</a></li>
-						<li>Developed by: 
-							<ul><li>Robert Griesemer <span class="small">(V8, HotSpot)</span>, </li>
-								<li>Rob Pike <span class="small">(UNIX, X11)</span>, </li>
-								<li>Ken Thompson <span class="small">(UNIX, UTF-8, regex)</span> and </li>
-								<li>Brad Fitzpatrick <span class="small">(LiveJournal, memcached, OpenID)</span></li>
-							</ul>
+						<li>Robert Griesemer <span class="small">(V8, HotSpot)</span>, </li>
+						<li>Rob Pike <span class="small">(UNIX, X11)</span>, </li>
+						<li>Ken Thompson <span class="small">(UNIX, UTF-8, regex)</span> and </li>
+						<li>Brad Fitzpatrick <span class="small">(LiveJournal, memcached, OpenID)</span></li>
 						<li>i386, amd64, ARM</li>
 						<li><u>Google!</u></li>
 					</ul>
 				</section>
 				<section>
-					<section>
 						<h2>Hello Go!</h2>
 <textarea style="height: 290px">
 package main;
@@ -118,13 +118,17 @@ package main;
 import "fmt";
 
 func main() {
+
 	var department string;
+
 	department = "Corp Apps";
+
 	fmt.Printf("Hello %s!", department);
 }
 </textarea>
 <pre style="height: 100px;">
 </pre>
+<span class="hint">if the newline comes after a token that could end a statement, insert a semicolon</span>
 <button class="runbtn">Run</button>
 					</section>
 					<section>
@@ -159,9 +163,155 @@ func main() {
 <pre style="height: 100px;">
 </pre>
 <button class="runbtn">Run</button>
-					</section>
 				</section>
+				<section>
+					<h2>Slices and Arrays</h2>
+<textarea style="height: 250px">
+package main
 
+import "fmt"
+
+func main() {
+
+	var intArray []int = []int{ 0, 1, 1, 2, 3, 5, 8, 13, 21 }
+	fmt.Printf("intArray[4] == %d", intArray[4])
+
+	intSlice := make([]int, 5, 100) // start with 5, max of 100
+	intSlice[4] = intArray[4]
+	fmt.Printf("intSlice[4] == %d\tlen(intSlice) == %d", intSlice[4], len(intSlice))
+
+
+
+	intSlice = append(intSlice, 34, 55)
+	fmt.Printf("intSlice[5] == %d\tlen(intSlice) == %d", intSlice[5], len(intSlice))
+	fmt.Printf("intSlice[6] == %d\tlen(intSlice) == %d", intSlice[6], len(intSlice))
+
+
+
+
+	intSlice = append(intSlice, 89, 144)
+	fmt.Printf("intSlice[7] == %d\tlen(intSlice) == %d", intSlice[7], len(intSlice))
+	fmt.Printf("intSlice[8] == %d\tlen(intSlice) == %d", intSlice[8], len(intSlice))
+}
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>For and Switch</h2>
+				</section>
+				<section>
+					<h2>Error Type and _ </h2>
+				</section>
+				<section>
+					<h2>Pointers!</h2>
+				</section>
+				<section>
+					<h2>Custom Types</h2>
+<textarea style="height: 290px">
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type Account struct {
+	Id int64
+	Name string
+	DateCreated time.Time
+}
+
+func main() {
+	account := &amp;Account{Id: 1234, Name: "Mark", DateCreated: time.Now()}
+	newAccount := &amp;account
+
+	accounts := []*Account{ account, *newAccount }
+
+	for i, a := range accounts {
+		fmt.Printf("account[%d] == %s", i, a) // variable
+		fmt.Printf("*(&amp;account[%d]) == %s", i, *(&amp;a)) // value-at
+		fmt.Printf("&amp;account[%d] == %s", i, &amp;a) // address-of
+	}
+}
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>Interfaces</h2>
+				</section>
+				<section>
+					<h2>Goroutines</h2>
+					<p>The strategy is to "multiplex independently executing functions onto a set of threads"</p>
+				</section>
+				<section>
+					<h2>Channels</h2>
+				</section>
+				<section>
+					<h2>Defer</h2>
+<textarea style="height: 290px">
+package main
+
+import "fmt"
+
+func main() {
+	i := c()
+	fmt.Printf("i value is %d", i)
+}
+
+func c() (i int) {
+    defer func() { i++ }()
+    return 1
+}
+
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<a class="cite" href="http://blog.golang.org/defer-panic-and-recover">see golang blog</a>
+<button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>Panic &amp; Recover</h2>
+
+<textarea style="height: 290px">
+package main
+
+import "fmt"
+
+func main() {
+    f()
+    fmt.Println("Returned normally from f.")
+}
+
+func f() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Printf("Recovered in f with recovery value %s\n", r)
+        }
+    }()
+    fmt.Println("Calling g.")
+    g(0)
+    fmt.Println("Returned normally from g.")
+}
+
+func g(i int) {
+    if i > 3 {
+        fmt.Printf("Panicking! (with value %v)\n", i)
+        panic(fmt.Sprintf("%v", i))
+    }
+    defer fmt.Println("Defer in g", i)
+    fmt.Println("Printing in g", i)
+    g(i + 1)
+}
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<a class="cite" href="http://blog.golang.org/defer-panic-and-recover">see golang blog</a>
+<button class="runbtn">Run</button>
+				</section>
 				<section>
 					<h1>FIN</h1>
 				</section>
@@ -224,7 +374,7 @@ func main() {
 				        e.preventDefault();
 				    }
 				})
-				//.linedtextarea()
+				// .linedtextarea()
 				;				
 				$('.runbtn').on("click", function() {
 					var btn = $(this);
@@ -257,6 +407,17 @@ func main() {
 							btn.val('Run');
 						}
 					});			
+				});
+				$('span.hint')
+					.hide()
+					.before('<a class="hint" href="">?</a>')
+					;
+				$('a.hint').bind('click', function(e) {
+					e.preventDefault();
+					$(this)
+						.next().show()
+						.prev().remove()
+						;
 				});
 			});
 		</script>
