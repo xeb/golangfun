@@ -8,6 +8,7 @@ import (
 	"github.com/xeb/golangfun/httpproxy"
 	"github.com/xeb/golangfun/libfun"
 	"github.com/xeb/golangfun/lrucache"
+	"github.com/xeb/golangfun/oauth"
 	"github.com/xeb/golangfun/presentation"
 	"sync"
 	"time"
@@ -18,18 +19,22 @@ type Account struct {
 	name string
 }
 
-var presentationEnabled bool
-var semaphoreEnabled bool
-var linkedListEnabled bool
-var httpProxyEnabled bool
-var interfacesEnabled bool
-var cacheEnabled bool
-var channelsEnabled bool
-var libfunEnabled bool
+var (
+	presentationEnabled bool
+	semaphoreEnabled    bool
+	oauthExample        bool
+	linkedListEnabled   bool
+	httpProxyEnabled    bool
+	interfacesEnabled   bool
+	cacheEnabled        bool
+	channelsEnabled     bool
+	libfunEnabled       bool
+)
 
 func init() {
 	flag.BoolVar(&presentationEnabled, "presentation", false, "Runs the presentation")
 	flag.BoolVar(&semaphoreEnabled, "semaphore", false, "Runs a semaphore example")
+	flag.BoolVar(&oauthExample, "oauth", false, "Runs an OAuth example")
 	flag.BoolVar(&linkedListEnabled, "linkedlist", false, "Runs a linked list example")
 	flag.BoolVar(&httpProxyEnabled, "httpproxy", false, "Runs an HTTP Proxy")
 	flag.BoolVar(&interfacesEnabled, "interfaces", false, "Runs an example about interfaces")
@@ -45,6 +50,9 @@ func main() {
 	}
 	if semaphoreEnabled {
 		semaphoreSample()
+	}
+	if oauthExample {
+		oauth.Try("")
 	}
 	if linkedListEnabled {
 		linkedListSample()
