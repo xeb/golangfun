@@ -1,16 +1,11 @@
-// Copyright 2011 The goauth2 Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// This program makes a call to the specified API, authenticated with OAuth2.
-// a list of example APIs can be found at https://code.google.com/oauthplayground/
 package oauth
 
 import (
 	"bufio"
+	"bytes"
 	"code.google.com/p/goauth2/oauth"
+	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
 )
@@ -23,17 +18,16 @@ var (
 	requestURL  = "https://www.googleapis.com/oauth2/v1/userinfo"
 	code        = ""
 	cachefile   = "cache.json"
+
+	clientId, _ = readLine("/etc/flowdle/clientid")
+	secret, _   = readLine("/etc/flowdle/secret")
 )
 
-const usageMsg = `
-To obtain a request token you must specify both -id and -secret.
-
-To obtain Client ID and Secret, see the "OAuth 2 Credentials" section under
-the "API Access" tab on this page: https://code.google.com/apis/console/
-
-Once you have completed the OAuth flow, the credentials should be stored inside
-the file specified by -cache and you may run without the -id and -secret flags.
-`
+type OAuthResult struct {
+	Success bool
+	AuthURL string
+	Debug   string
+}
 
 func readLine(path string) (string, error) {
 	file, err := os.Open(path)
@@ -48,20 +42,18 @@ func readLine(path string) (string, error) {
 }
 
 func Try(c string) {
+	r, _ := TryOAuth()
+	fmt.Printf(" Result is %s ", r)
+}
 
-	if c != "" && code == "" {
-		code = c
-	}
+func TryOAuth() (result *OAuthResult, e error) {
 
-	var clientId string
-	var clientSecret string
-	clientId, _ = readLine("/etc/flowdle/clientid")
-	clientSecret, _ = readLine("/etc/flowdle/secret")
+	result = &OAuthResult{}
 
 	// Set up a configuration.
 	config := &oauth.Config{
 		ClientId:     clientId,
-		ClientSecret: clientSecret,
+		ClientSecret: secret,
 		RedirectURL:  redirectURL,
 		Scope:        scope,
 		AuthURL:      authURL,
@@ -75,42 +67,40 @@ func Try(c string) {
 	// Try to pull the token from the cache; if this fails, we need to get one.
 	token, err := config.TokenCache.Token()
 	if err != nil {
-		if clientId == "" || clientSecret == "" {
-			fmt.Fprint(os.Stderr, usageMsg)
-			os.Exit(2)
-		}
-		if code == "" {
-			// Get an authorization code from the data provider.
-			// ("Please ask the user if I can access this resource.")
-			url := config.AuthCodeURL("")
-			fmt.Println("Visit this URL to get a code, then run again with -code=YOUR_CODE\n")
-			fmt.Println(url)
+		if clientId == "" || secret == "" {
+			// TODO: error
+			result.Success = false
+			e = errors.New("Cannot find clientId and/or secret.  Check /etc/flowdle")
 			return
 		}
-		// Exchange the authorization code for an access token.
-		// ("Here's the code you gave the user, now give me a token!")
+		if code == "" {
+			url := config.AuthCodeURL("")
+			result.Success = false
+			result.AuthURL = url
+			return
+		}
+
 		token, err = transport.Exchange(code)
 		if err != nil {
 			log.Fatal("Exchange:", err)
+			e = err
 		}
-		// (The Exchange method will automatically cache the token.)
-		fmt.Printf("Token is cached in %v\n", config.TokenCache)
 	}
 
-	// Make the actual request using the cached token to authenticate.
-	// ("Here's the token, let me in!")
 	transport.Token = token
 
-	// Make the request.
 	r, err := transport.Client().Get(requestURL)
 	if err != nil {
 		log.Fatal("Get:", err)
+		e = err
 	}
 	defer r.Body.Close()
 
-	// Write the response to standard output.
-	io.Copy(os.Stdout, r.Body)
-
 	// Send final carriage return, just to be neat.
-	fmt.Println()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(r.Body)
+	s := buf.String()
+	result.Debug = s
+	result.Success = true
+	return
 }
