@@ -164,7 +164,7 @@ func main() {
 <button class="runbtn">Run</button>
 				</section>
 				<section>
-					<h2>Slices and Arrays</h2>
+					<h2>Arrays, Slices and Maps</h2>
 <textarea style="height: 250px">
 package main
 
@@ -191,6 +191,18 @@ func main() {
 	intSlice = append(intSlice, 89, 144)
 	fmt.Printf("intSlice[7] == %d\tlen(intSlice) == %d", intSlice[7], len(intSlice))
 	fmt.Printf("intSlice[8] == %d\tlen(intSlice) == %d", intSlice[8], len(intSlice))
+
+
+
+	statesAndCapitals := make(map[string]string, 50)
+	statesAndCapitals["California"] = "Sacremento"
+	statesAndCapitals["Arizona"] = "Phoenix"
+	statesAndCapitals["Massachusetts"] = "Boston"
+
+	for k, v := range statesAndCapitals {
+		fmt.Printf("State %s has a capital of %s", k, v)
+	}
+
 }
 </textarea>
 <pre style="height: 100px;">
