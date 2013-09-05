@@ -45,32 +45,48 @@ func init() {
 }
 
 func main() {
+
+	u := true
+
 	if presentationEnabled {
 		presentationSample()
+		u = false
 	}
 	if semaphoreEnabled {
 		semaphoreSample()
+		u = false
 	}
 	if oauthExample {
 		oauth.Try("")
+		u = false
 	}
 	if linkedListEnabled {
 		linkedListSample()
+		u = false
 	}
 	if interfacesEnabled {
 		interfacesSample()
+		u = false
 	}
 	if httpProxyEnabled {
 		httpProxySample()
+		u = false
 	}
 	if cacheEnabled {
 		cacheSample()
+		u = false
 	}
 	if libfunEnabled {
 		libfunSample()
+		u = false
 	}
 	if channelsEnabled {
 		channelSample()
+		u = false
+	}
+
+	if u {
+		flag.Usage()
 	}
 }
 

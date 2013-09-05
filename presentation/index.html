@@ -21,6 +21,7 @@
 			textarea {
 				background: #FFFFD8;
 				font-size: 16px;
+				font-family: Helvetica, Arial, sans-serif;
 			}
 			pre {
 				background: #fff;
@@ -163,54 +164,15 @@ func main() {
 </pre>
 <button class="runbtn">Run</button>
 				</section>
+
 				<section>
-					<h2>For and Switch</h2>
-<textarea style="height: 250px">
+					<h2>Maps</h2>
+<textarea style="height: 300px">
 package main
 
 import "fmt"
 
 func main() {
-	for i := 0; i &lt; 10; i++ {
-		fmt.Printf("i is %d", i)
-	}
-}
-</textarea>
-<pre style="height: 100px;">
-</pre>
-<button class="runbtn">Run</button>
-				</section>
-				<section>
-					<h2>Arrays, Slices and Maps</h2>
-<textarea style="height: 250px">
-package main
-
-import "fmt"
-
-func main() {
-
-	var intArray []int = []int{ 0, 1, 1, 2, 3, 5, 8, 13, 21 }
-	fmt.Printf("intArray[4] == %d", intArray[4])
-
-	intSlice := make([]int, 5, 100) // start with 5, max of 100
-	intSlice[4] = intArray[4]
-	fmt.Printf("intSlice[4] == %d\tlen(intSlice) == %d", intSlice[4], len(intSlice))
-
-
-
-	intSlice = append(intSlice, 34, 55)
-	fmt.Printf("intSlice[5] == %d\tlen(intSlice) == %d", intSlice[5], len(intSlice))
-	fmt.Printf("intSlice[6] == %d\tlen(intSlice) == %d", intSlice[6], len(intSlice))
-
-
-
-
-	intSlice = append(intSlice, 89, 144)
-	fmt.Printf("intSlice[7] == %d\tlen(intSlice) == %d", intSlice[7], len(intSlice))
-	fmt.Printf("intSlice[8] == %d\tlen(intSlice) == %d", intSlice[8], len(intSlice))
-
-
-
 	statesAndCapitals := make(map[string]string, 50)
 	statesAndCapitals["California"] = "Sacremento"
 	statesAndCapitals["Arizona"] = "Phoenix"
@@ -222,25 +184,182 @@ func main() {
 
 }
 </textarea>
+<pre style="height: 70px;">
+</pre>
+<button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>For - I</h2>
+<textarea style="height: 200px">
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i &lt; 10; i++ {
+		fmt.Printf("i is %d", i)
+	}
+}
+</textarea>
+<pre style="height: 200px;">
+</pre>
+<button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>For - II</h2>
+<textarea style="height: 275px">
+package main
+
+import "fmt"
+
+func main() {
+	items := map[int]string {
+		123: "Sword of the Eel",
+		456: "Helm of the God",
+		789: "Boots of the Gopher", // you NEED the last comman (awesome!)
+	}
+
+	for key, value := range items { // show off blank identifier
+		fmt.Printf("Key is %d   Value is %s", key, value)
+	}
+}
+</textarea>
+<pre style="height: 110px;">
+</pre>
+<button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>Switch</h2>
+<textarea style="height: 375px">
+package main
+
+import "fmt"
+
+func main() {
+	providers := []string{ "VISA", "MASTERCARD", "AMEX" }
+	provider := providers[1]
+	var selectedProvider string
+
+	switch provider {
+	case "VISA":
+		selectedProvider = "Visa"
+	case "MASTERCARD":
+		selectedProvider = "MasterCard"
+	case "AMEX":
+		selectedProvider = "American Express"
+	}
+
+	fmt.Printf("Provider %s, Selected Provider %s", provider, selectedProvider)
+}
+</textarea>
+<pre style="height: 50px;">
+</pre>
+<button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>Arrays</h2>
+<textarea style="height: 200px">
+package main
+
+import "fmt"
+
+func main() {
+
+	var intArray []int = []int{ 0, 1, 1, 2, 3, 5, 8, 13, 21 }
+	fmt.Printf("intArray[4] == %d", intArray[4])
+}
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<button class="runbtn">Run</button>
+				</section>
+
+				<section>
+					<h2>Slices</h2>
+<textarea style="height: 280px">
+package main
+
+import "fmt"
+
+func main() {
+
+	intSlice := make([]int, 5, 100) // start with 5, max of 100
+	intSlice[4] = 1337
+	fmt.Printf("intSlice[4] == %d\tlen(intSlice) == %d", intSlice[4], len(intSlice))
+
+	intSlice = append(intSlice, 34, 55)
+	fmt.Printf("intSlice[5] == %d\tlen(intSlice) == %d", intSlice[5], len(intSlice))
+	fmt.Printf("intSlice[6] == %d\tlen(intSlice) == %d", intSlice[6], len(intSlice))
+}
+</textarea>
 <pre style="height: 100px;">
 </pre>
 <button class="runbtn">Run</button>
 				</section>
 				<section>
-					<h2>Error Type and _ </h2>
+					<h2>Error Type</h2>
+<textarea style="height: 420px">
+package main
+
+import ( 
+	"fmt"
+	"time"
+	"errors"
+)
+
+var hasError bool = true
+
+func main() {
+	accountId, e := getAccountId("klim50@mailinator.com")
+	fmt.Printf("Found account ID %d, error is %s", accountId, e)
+}
+
+func getAccountId(accountName string) (accountId int64, e error) {
+	if hasError {
+		e = errors.New("Because you told me to!")
+		return
+	} 
+	accountId = time.Now().Unix() / 1000
+	return
+}
+</textarea>
+<pre style="height: 30px;">
+</pre>
+<button class="runbtn">Run</button>
+					<a class="cite" href="http://golang.org/doc/effective_go.html#errors">see Effective Go</a>
 				</section>
 				<section>
 					<h2>Pointers!</h2>
+<textarea style="height: 320px">
+package main
+
+import ( 
+	"fmt"
+)
+
+func main() {
+	var i int
+	i = 123456789
+
+	var j *int
+	j = &amp;i
+
+	fmt.Printf("i has value of %s\ti has address of %s", i, &amp;i)
+	fmt.Printf("j has value of %s\tj has address of %s", j, &amp;j)
+	fmt.Printf("j's underlying value is %s", *j)
+}
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<button class="runbtn">Run</button>
 				</section>
 				<section>
 					<h2>Custom Types</h2>
-<textarea style="height: 290px">
+<textarea style="height: 340px">
 package main
 
-import (
-	"fmt"
-	"time"
-)
+import "fmt"
+import "time"
 
 type Account struct {
 	Id int64
@@ -314,7 +433,7 @@ func main() {
 func f() {
     defer func() {
         if r := recover(); r != nil {
-            fmt.Printf("Recovered in f with recovery value %s\n", r)
+            fmt.Printf("Recovered in f with recovery value %s", r)
         }
     }()
     fmt.Println("Calling g.")
@@ -324,7 +443,7 @@ func f() {
 
 func g(i int) {
     if i > 3 {
-        fmt.Printf("Panicking! (with value %v)\n", i)
+        fmt.Printf("Panicking! (with value %v)", i)
         panic(fmt.Sprintf("%v", i))
     }
     defer fmt.Println("Defer in g", i)
@@ -336,6 +455,12 @@ func g(i int) {
 </pre>
 <a class="cite" href="http://blog.golang.org/defer-panic-and-recover">see golang blog</a>
 <button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>Interesting Golang Projects</h2>
+					<ul>
+						<li><a href="https://github.com/coreos/etcd">etcd</a></li>
+					</ul>
 				</section>
 				<section>
 					<h1>FIN</h1>
