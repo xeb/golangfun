@@ -385,7 +385,44 @@ func main() {
 <button class="runbtn">Run</button>
 				</section>
 				<section>
-					<h2>Interfaces</h2>
+					<h2>Interfaces</h2>	
+					<p>A type implements an interface if it has receiver<br/> functions for <u>all</u> of the interface's functions</p>
+				
+<textarea style="height: 300px">
+package main
+
+import "fmt"
+import "time"
+
+type Account struct {
+	Id int64
+	Name string
+}
+
+type Authenticator interface {
+	Authenticate(code string) bool
+	Expiration() time.Time
+}
+
+func (a *Account) Authenticate(code string) bool {
+	return true
+}
+
+func (a *Account) Expiration() time.Time {
+	return time.Now().Add(30 * 24 * time.Hour) // time.Now on tour.golang.org is 11/10/09
+}
+
+func main() {
+	var a Authenticator
+	a = &amp;Account{Id:1234, Name:"mkockerbeck"}
+	fmt.Printf("Authenticator is %s", a)
+	fmt.Printf("Authenticator.Authenticate(\"5678\") is %s", a.Authenticate("5678"))
+	fmt.Printf("Authenticator.Expiration() is %s", a.Expiration())
+}
+</textarea>
+<pre style="height: 50px;">
+</pre>
+<button class="runbtn">Run</button>
 				</section>
 				<section>
 					<h2>Goroutines</h2>
