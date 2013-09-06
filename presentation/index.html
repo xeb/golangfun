@@ -111,6 +111,17 @@
 					</ul>
 				</section>
 				<section>
+					<h2>How?</h2>
+					<ul>
+						<li>Started learning on 8/11/2013 <br/>(i.e. exactly <a href="https://github.com/xeb?tab=contributions&amp;from=2013-08-11">1 month ago</a>)</li>
+						<li>At least 1 commit per day for 31 days</li>
+						<li><a href="http://tour.golang.org">tour.golang.org</a></li>
+						<li><a href="http://golang.org/doc/effective_go.html">Effective Go</a></li>
+						<li><a href="http://golang.org/src/">The Mother Fucking Source Code</a></li>
+						<li>This presentation is running in a custom Go HTTP server, but contains many other examples (LRUcache, semaphore, httpproxy, oauth, etc.)</li>
+					</ul>
+				</section>
+				<section>
 						<h2>Hello Go!</h2>
 <textarea style="height: 290px">
 package main;
@@ -216,7 +227,7 @@ func main() {
 	items := map[int]string {
 		123: "Sword of the Eel",
 		456: "Helm of the God",
-		789: "Boots of the Gopher", // you NEED the last comman (awesome!)
+		789: "Boots of the Gopher", // you NEED the last comma (awesome!)
 	}
 
 	for key, value := range items { // show off blank identifier
@@ -354,8 +365,8 @@ func main() {
 <button class="runbtn">Run</button>
 				</section>
 				<section>
-					<h2>Custom Types</h2>
-<textarea style="height: 340px">
+					<h2>Custom Types</h2><span class="small">(and more pointers)</span>
+<textarea style="height: 300px">
 package main
 
 import "fmt"
@@ -367,16 +378,32 @@ type Account struct {
 	DateCreated time.Time
 }
 
-func main() {
+func main() {	
 	account := &amp;Account{Id: 1234, Name: "Mark", DateCreated: time.Now()}
+	account2 := &amp;Account{Id: 150056, Name: "KLim", DateCreated: time.Now().Add(24 * 6 * time.Hour)}
 	newAccount := &amp;account
+	newAccount2 := &amp;account2
 
-	accounts := []*Account{ account, *newAccount }
+	accounts := []*Account{account, *newAccount, account2, *newAccount2}
+
+	fmt.Printf("&amp;account == %s\n\n", &amp;account)
+	fmt.Printf("newAccount == %s\n\n", newAccount)
+	fmt.Printf("&amp;newAccount == %s\n\n", &amp;newAccount)
+
+	fmt.Printf("&amp;account2 == %s\n\n", &amp;account2)
+	fmt.Printf("newAccount2 == %s\n\n", newAccount2)
+	fmt.Printf("&amp;newAccount2 == %s\n\n", &amp;newAccount2)
 
 	for i, a := range accounts {
-		fmt.Printf("account[%d] == %s", i, a) // variable
-		fmt.Printf("*(&amp;account[%d]) == %s", i, *(&amp;a)) // value-at
-		fmt.Printf("&amp;account[%d] == %s", i, &amp;a) // address-of
+		fmt.Printf("account[%d] == %s\n\n", i, a)         // variable
+		fmt.Printf("*(&amp;account[%d]) == %s\n\n", i, *(&amp;a)) // value-at
+		fmt.Printf("&amp;account[%d] == %s\n\n", i, &amp;a)       // address-of
+	}
+
+	for i := 0; i &lt; len(accounts); i++ {
+		fmt.Printf("account[%d] == %s\n\n", i, accounts[i])         // variable
+		fmt.Printf("*(&amp;account[%d]) == %s\n\n", i, *(&amp;accounts[i])) // value-at
+		fmt.Printf("&amp;account[%d] == %s\n\n", i, &amp;accounts[i])       // address-of
 	}
 }
 </textarea>
@@ -394,9 +421,10 @@ package main
 import "fmt"
 import "time"
 
-type Account struct {
+type AccountSecurity struct {
 	Id int64
 	Name string
+	AuthSerial string
 }
 
 type Authenticator interface {
@@ -404,19 +432,20 @@ type Authenticator interface {
 	Expiration() time.Time
 }
 
-func (a *Account) Authenticate(code string) bool {
-	return true
+func (a *AccountSecurity) Authenticate(code string) bool {
+	return a.AuthSerial == "1234" &amp;&amp; code == "5678"
 }
 
-func (a *Account) Expiration() time.Time {
+func (a *AccountSecurity) Expiration() time.Time {
 	return time.Now().Add(30 * 24 * time.Hour) // time.Now on tour.golang.org is 11/10/09
 }
 
 func main() {
 	var a Authenticator
-	a = &amp;Account{Id:1234, Name:"mkockerbeck"}
+	a = &amp;AccountSecurity{Id:1234, Name:"mkockerbeck", AuthSerial: "1234"}
 	fmt.Printf("Authenticator is %s", a)
 	fmt.Printf("Authenticator.Authenticate(\"5678\") is %s", a.Authenticate("5678"))
+	fmt.Printf("Authenticator.Authenticate(\"1234\") is %s", a.Authenticate("1234"))
 	fmt.Printf("Authenticator.Expiration() is %s", a.Expiration())
 }
 </textarea>

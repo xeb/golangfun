@@ -21,6 +21,7 @@ type Account struct {
 
 var (
 	presentationEnabled bool
+	customTypeEnabled   bool
 	semaphoreEnabled    bool
 	oauthExample        bool
 	linkedListEnabled   bool
@@ -34,6 +35,7 @@ var (
 func init() {
 	flag.BoolVar(&presentationEnabled, "presentation", false, "Runs the presentation")
 	flag.BoolVar(&semaphoreEnabled, "semaphore", false, "Runs a semaphore example")
+	flag.BoolVar(&customTypeEnabled, "customType", false, "Runs a custom type example")
 	flag.BoolVar(&oauthExample, "oauth", false, "Runs an OAuth example")
 	flag.BoolVar(&linkedListEnabled, "linkedlist", false, "Runs a linked list example")
 	flag.BoolVar(&httpProxyEnabled, "httpproxy", false, "Runs an HTTP Proxy")
@@ -54,6 +56,10 @@ func main() {
 	}
 	if semaphoreEnabled {
 		semaphoreSample()
+		u = false
+	}
+	if customTypeEnabled {
+		datastructs.CustomTypeExample()
 		u = false
 	}
 	if oauthExample {
