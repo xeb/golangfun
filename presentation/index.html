@@ -414,7 +414,6 @@ func main() {
 				<section>
 					<h2>Interfaces</h2>	
 					<p>A type implements an interface if it has receiver<br/> functions for <u>all</u> of the interface's functions</p>
-				
 <textarea style="height: 300px">
 package main
 
@@ -456,9 +455,84 @@ func main() {
 				<section>
 					<h2>Goroutines</h2>
 					<p>The strategy is to "multiplex independently executing functions onto a set of threads"</p>
+<textarea style="height: 300px">
+package main
+
+import "fmt"
+import "time"
+
+func waitThenPrint() {
+	time.Sleep(123 * time.Millisecond)
+	fmt.Print("--> Done waiting!  Let's GO")
+}
+
+func main() {
+	fmt.Print("Starting")
+	go waitThenPrint()
+	time.Sleep(10 * time.Second)
+	fmt.Print("Exiting")
+}
+</textarea>
+<pre style="height: 50px;">
+</pre>
+<button class="runbtn">Run</button>
 				</section>
 				<section>
 					<h2>Channels</h2>
+<textarea style="height: 320px">
+package main
+
+import "fmt"
+
+//var intChan chan int /* NOTE: this will cause a deadlock */
+var intChan chan int = make(chan int)
+
+func main() {
+	fmt.Print("Starting")
+	go func() { intChan &lt;- 31337 }()
+	fmt.Print("Pushed value 31337 onto channel.  Waiting for value...")
+
+	i := &lt;-intChan
+	fmt.Printf("i is %s", i)
+
+	fmt.Print("Exiting")
+}
+</textarea>
+<pre style="height: 50px;">
+</pre>
+<button class="runbtn">Run</button>
+<span class="cite"><a href="http://golang.org/doc/effective_go.html#channels">see Effective Go</a></span>	
+				</section>
+				<section>
+					<h2>Channels</h2>
+<textarea style="height: 320px">
+package main
+
+import "time"
+import "fmt"
+
+func main() {
+	expect := make(chan bool, 1)
+
+	// Standard operation that takes 2 seconds
+	go func() { 
+		time.Sleep(2 * time.Second)
+		expect &lt;- true
+	}()
+
+	select {
+		case &lt;-expect:
+			fmt.Println("Done in expected time from chan")
+
+		// Timeout after 3 seconds
+		case &lt;-time.After(3 * time.Second):
+			fmt.Println("Timed out")
+	}
+}
+</textarea>
+<pre style="height: 50px;">
+</pre>
+<button class="runbtn">Run</button>
 				</section>
 				<section>
 					<h2>Defer</h2>
@@ -526,6 +600,10 @@ func g(i int) {
 					<h2>Interesting Golang Projects</h2>
 					<ul>
 						<li><a href="https://github.com/coreos/etcd">etcd</a></li>
+						<li><a href="https://github.com/couchbaselabs/go-couchbase">go-couchbase</a></li>
+						<li><a href="https://github.com/robfig/revel/">Revel - MVC Framework</a></li>
+						<li><a href="https://code.google.com/p/goauth2/">Go OAuth2</a></li>
+						<li><a href="https://github.com/go-sql-driver/mysql">go-sql-driver</a></li>
 					</ul>
 				</section>
 				<section>
