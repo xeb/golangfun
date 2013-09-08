@@ -23,10 +23,11 @@
 				font-size: 16px;
 				font-family: Helvetica, Arial, sans-serif;
 			}
-			pre {
+			pre, span.code {
 				background: #fff;
 				color: #000;
 				font-size: 16px !important;
+				font-family: Courier;
 				overflow: auto;
 				position: relative
 			}
@@ -41,6 +42,9 @@
 				color: #ccc;
 				position: absolute;
 				right: 10px;
+			}
+			span.code {
+				padding: 10px;
 			}
 			span.hint, span.cite, a.cite {
 				font-size: 18px;
@@ -410,6 +414,17 @@ func main() {
 <pre style="height: 100px;">
 </pre>
 <button class="runbtn">Run</button>
+				</section>
+				<section>
+					<h2>Packages</h2>
+					<ul>
+						<li><span class="code">package dependency</span> First line of every go source file</li>
+						<li>Public Functions &amp; Types Start With A Capital Letter</li>
+						<li>private functions &amp; types start with a lowercase letter</li>
+						<li>$GOPATH</li>
+						<li><span class="code">import "github.com/xeb/golangfun/package"</span></li>
+						<li><span class="code">go get github.com/couchbaselabs/go-couchbase</span></li>
+					</ul>
 				</section>
 				<section>
 					<h2>Interfaces</h2>	
