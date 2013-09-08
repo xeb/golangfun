@@ -494,17 +494,57 @@ func main() {
 
 	i := &lt;-intChan
 	fmt.Printf("i is %s", i)
-
+	close(intChan)
 	fmt.Print("Exiting")
 }
 </textarea>
-<pre style="height: 50px;">
+<pre style="height: 70px;">
 </pre>
 <button class="runbtn">Run</button>
 <span class="cite"><a href="http://golang.org/doc/effective_go.html#channels">see Effective Go</a></span>	
 				</section>
 				<section>
-					<h2>Channels</h2>
+					<h2>Read / Write Channels</h2>
+<textarea style="height: 320px">
+package main
+
+import "fmt"
+
+func readChan(ch chan int) &lt;-chan int {
+	return ch
+}
+
+func writeChan(ch chan int) chan&lt;- int {
+	return ch
+}
+
+func main() {
+	ch := make(chan int)
+
+	reader := readChan(ch)
+	writer := writeChan(ch)
+
+	fmt.Printf("Channels created")
+	go func() {
+		val := &lt;-reader
+		fmt.Printf("Read %s", val)
+	}()
+
+	fmt.Print("Writing 14")
+	writer &lt;- 14
+	//reader &lt;- 14 /* will not compile */
+	fmt.Print("Wrote 14")
+	close(ch)
+}
+
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<button class="runbtn">Run</button>
+<span class="cite"><a href="http://play.golang.org/p/_gSUYh0jHV">BST </a></span>	
+				</section>
+				<section>
+					<h2>Timeout via Channels</h2>
 <textarea style="height: 320px">
 package main
 

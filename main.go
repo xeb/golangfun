@@ -245,6 +245,8 @@ func libfunSample() {
 }
 
 func channelSample() {
+	channels.ReadWriteExample()
+	return
 	channels.TimeoutExample()
 	channels.FixedMessagePump()
 }
