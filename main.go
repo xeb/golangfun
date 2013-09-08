@@ -21,6 +21,7 @@ type Account struct {
 
 var (
 	presentationEnabled bool
+	presentationRoot    string
 	customTypeEnabled   bool
 	semaphoreEnabled    bool
 	oauthExample        bool
@@ -34,6 +35,7 @@ var (
 
 func init() {
 	flag.BoolVar(&presentationEnabled, "presentation", false, "Runs the presentation")
+	flag.StringVar(&presentationRoot, "presentationRoot", "./", "Sets the presentation root")
 	flag.BoolVar(&semaphoreEnabled, "semaphore", false, "Runs a semaphore example")
 	flag.BoolVar(&customTypeEnabled, "customType", false, "Runs a custom type example")
 	flag.BoolVar(&oauthExample, "oauth", false, "Runs an OAuth example")
@@ -98,7 +100,7 @@ func main() {
 
 func presentationSample() {
 	fmt.Println("Starting up presentation!")
-	presentation.Start()
+	presentation.Start(presentationRoot)
 }
 
 func linkedListSample() {

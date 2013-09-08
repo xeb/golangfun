@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var templatePath = "./presentation/index.html"
+var templatePath string
 var port int = 8093
 
 var contentMux = http.NewServeMux()
@@ -24,8 +24,9 @@ func (p *Presentation) getTime() string {
 	return p.TimeValue.Format("Jan 2 2006") // this is just magically awesome; see: http://golang.org/pkg/time/#pkg-constants
 }
 
-func Start() {
-	contentMux.Handle("/", http.FileServer(http.Dir("./presentation/")))
+func Start(presentationRoot string) {
+	templatePath = fmt.Sprintf("%spresentation/index.html", presentationRoot)
+	contentMux.Handle("/", http.FileServer(http.Dir(fmt.Sprintf("%spresentation/", presentationRoot))))
 
 	fmt.Printf("Listing on localhost:%d\n", port)
 	http.HandleFunc("/", handleRequest)
