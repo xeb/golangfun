@@ -14,7 +14,7 @@
 			}
 			
 			textarea, pre {
-				font-family: 'Lucida Grande' !important;
+				font-family: 'Lucida Grande', 'Arial', 'sans-serif' !important;
 				padding: 10px !important;
 				width: 90%;
 			}
@@ -23,10 +23,11 @@
 				font-size: 16px;
 				font-family: Helvetica, Arial, sans-serif;
 			}
-			pre {
+			pre, span.code {
 				background: #fff;
 				color: #000;
 				font-size: 16px !important;
+				font-family: Courier;
 				overflow: auto;
 				position: relative
 			}
@@ -41,6 +42,9 @@
 				color: #ccc;
 				position: absolute;
 				right: 10px;
+			}
+			span.code {
+				padding: 10px;
 			}
 			span.hint, span.cite, a.cite {
 				font-size: 18px;
@@ -95,7 +99,8 @@
 					<p>
 						<small>Mark Kockerbeck</small><br/>
 						<small>{{.Time}}</small><br/>
-						<small><a href="http://github.com/xeb/golangfun">github.com/xeb/golangfun</a></small>
+						<small><a href="http://github.com/xeb/golangfun">github.com/xeb/golangfun</a></small><br/>
+						<small><a href="http://golangfun.epicapp.com">golangfun.epicapp.com</a></small>
 					</p>
 				</section>
 				<section>
@@ -113,7 +118,7 @@
 				<section>
 					<h2>How?</h2>
 					<ul>
-						<li>Started learning on 8/11/2013 <br/>(i.e. exactly <a href="https://github.com/xeb?tab=contributions&amp;from=2013-08-11">1 month ago</a>)</li>
+						<li>Started learning on 8/11/2013 <br/>(<a href="https://github.com/xeb?tab=contributions&amp;from=2013-08-11">1 month ago</a>)</li>
 						<li>At least 1 commit per day for 31 days</li>
 						<li><a href="http://tour.golang.org">tour.golang.org</a></li>
 						<li><a href="http://golang.org/doc/effective_go.html">Effective Go</a></li>
@@ -412,9 +417,19 @@ func main() {
 <button class="runbtn">Run</button>
 				</section>
 				<section>
+					<h2>Packages</h2>
+					<ul>
+						<li><span class="code">package dependency</span> First line of every go source file</li>
+						<li>Public Functions &amp; Types Start With A Capital Letter</li>
+						<li>private functions &amp; types start with a lowercase letter</li>
+						<li>$GOPATH</li>
+						<li><span class="code">import "github.com/xeb/golangfun/package"</span></li>
+						<li><span class="code">go get github.com/couchbaselabs/go-couchbase</span></li>
+					</ul>
+				</section>
+				<section>
 					<h2>Interfaces</h2>	
 					<p>A type implements an interface if it has receiver<br/> functions for <u>all</u> of the interface's functions</p>
-				
 <textarea style="height: 300px">
 package main
 
@@ -456,9 +471,124 @@ func main() {
 				<section>
 					<h2>Goroutines</h2>
 					<p>The strategy is to "multiplex independently executing functions onto a set of threads"</p>
+<textarea style="height: 300px">
+package main
+
+import "fmt"
+import "time"
+
+func waitThenPrint() {
+	time.Sleep(123 * time.Millisecond)
+	fmt.Print("--> Done waiting!  Let's GO")
+}
+
+func main() {
+	fmt.Print("Starting")
+	go waitThenPrint()
+	time.Sleep(10 * time.Second)
+	fmt.Print("Exiting")
+}
+</textarea>
+<pre style="height: 50px;">
+</pre>
+<button class="runbtn">Run</button>
 				</section>
 				<section>
 					<h2>Channels</h2>
+<textarea style="height: 320px">
+package main
+
+import "fmt"
+
+//var intChan chan int /* NOTE: this will cause a deadlock */
+var intChan chan int = make(chan int)
+
+func main() {
+	fmt.Print("Starting")
+	go func() { intChan &lt;- 31337 }()
+	fmt.Print("Pushed value 31337 onto channel.  Waiting for value...")
+
+	i := &lt;-intChan
+	fmt.Printf("i is %s", i)
+	close(intChan)
+	fmt.Print("Exiting")
+}
+</textarea>
+<pre style="height: 70px;">
+</pre>
+<button class="runbtn">Run</button>
+<span class="cite"><a href="http://golang.org/doc/effective_go.html#channels">see Effective Go</a></span>	
+				</section>
+				<section>
+					<h2>Read / Write Channels</h2>
+<textarea style="height: 320px">
+package main
+
+import "fmt"
+
+func readChan(ch chan int) &lt;-chan int {
+	return ch
+}
+
+func writeChan(ch chan int) chan&lt;- int {
+	return ch
+}
+
+func main() {
+	ch := make(chan int)
+
+	reader := readChan(ch)
+	writer := writeChan(ch)
+
+	fmt.Printf("Channels created")
+	go func() {
+		val := &lt;-reader
+		fmt.Printf("Read %s", val)
+	}()
+
+	fmt.Print("Writing 14")
+	writer &lt;- 14
+	//reader &lt;- 14 /* will not compile */
+	fmt.Print("Wrote 14")
+	close(ch)
+}
+
+</textarea>
+<pre style="height: 100px;">
+</pre>
+<button class="runbtn">Run</button>
+<span class="cite"><a href="http://play.golang.org/p/_gSUYh0jHV">BST </a></span>	
+				</section>
+				<section>
+					<h2>Timeout via Channels</h2>
+<textarea style="height: 320px">
+package main
+
+import "time"
+import "fmt"
+
+func main() {
+	expect := make(chan bool, 1)
+
+	// Standard operation that takes 2 seconds
+	go func() { 
+		time.Sleep(2 * time.Second)
+		expect &lt;- true
+	}()
+
+	select {
+		case &lt;-expect:
+			fmt.Println("Done in expected time from chan")
+
+		// Timeout after 3 seconds
+		case &lt;-time.After(3 * time.Second):
+			fmt.Println("Timed out")
+	}
+}
+</textarea>
+<pre style="height: 50px;">
+</pre>
+<button class="runbtn">Run</button>
 				</section>
 				<section>
 					<h2>Defer</h2>
@@ -526,6 +656,10 @@ func g(i int) {
 					<h2>Interesting Golang Projects</h2>
 					<ul>
 						<li><a href="https://github.com/coreos/etcd">etcd</a></li>
+						<li><a href="https://github.com/couchbaselabs/go-couchbase">go-couchbase</a></li>
+						<li><a href="https://github.com/robfig/revel/">Revel - MVC Framework</a></li>
+						<li><a href="https://code.google.com/p/goauth2/">Go OAuth2</a></li>
+						<li><a href="https://github.com/go-sql-driver/mysql">go-sql-driver</a></li>
 					</ul>
 				</section>
 				<section>
