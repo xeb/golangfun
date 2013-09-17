@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/xeb/golangfun/channels"
 	"github.com/xeb/golangfun/datastructures"
+	"github.com/xeb/golangfun/fileio"
 	"github.com/xeb/golangfun/httpproxy"
 	"github.com/xeb/golangfun/libfun"
 	"github.com/xeb/golangfun/lrucache"
@@ -27,6 +28,8 @@ var (
 	oauthExample        bool
 	linkedListEnabled   bool
 	httpProxyEnabled    bool
+	linecount           bool
+	linecountPath       string
 	interfacesEnabled   bool
 	cacheEnabled        bool
 	channelsEnabled     bool
@@ -45,6 +48,10 @@ func init() {
 	flag.BoolVar(&cacheEnabled, "cache", false, "Run a LRU Cache sample")
 	flag.BoolVar(&channelsEnabled, "channels", false, "Run a Channels sample")
 	flag.BoolVar(&libfunEnabled, "libfun", false, "Run some 'libfun' sample")
+
+	flag.BoolVar(&linecount, "linecount", false, "Run linecount sample")
+	flag.StringVar(&linecountPath, "linecountPath", "", "Sets the linecount path")
+
 	flag.Parse()
 }
 
@@ -90,6 +97,11 @@ func main() {
 	}
 	if channelsEnabled {
 		channelSample()
+		u = false
+	}
+	if linecount || linecountPath != "" {
+		lc := fileio.GetLineCount(linecountPath)
+		fmt.Printf("Line Count == %d\n", lc)
 		u = false
 	}
 
