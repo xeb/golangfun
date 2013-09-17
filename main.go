@@ -12,6 +12,8 @@ import (
 	"github.com/xeb/golangfun/oauth"
 	"github.com/xeb/golangfun/presentation"
 	"sync"
+	"os"
+	"bufio"
 	"time"
 )
 
@@ -56,9 +58,10 @@ func init() {
 }
 
 func main() {
+	
+	readLineTest()
 
 	u := true
-
 	if presentationEnabled {
 		presentationSample()
 		u = false
@@ -263,4 +266,33 @@ func channelSample() {
 	return
 	channels.TimeoutExample()
 	channels.FixedMessagePump()
+}
+
+func readLineTest() {
+	path := "/etc/flowdle/"
+	exists, _ := exists(path)
+	if exists == false {
+		path = "c:\\cygwin64\\etc\\flowdle\\"
+	}
+	line, e := readLine(fmt.Sprintf("%sclientid", path))
+	fmt.Printf("READ LINE %s (error == %s)", line, e)
+}
+
+func readLine(path string) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	return scanner.Text(), scanner.Err()
+}
+
+func exists(path string) (bool, error) {
+    _, err := os.Stat(path)
+    if err == nil { return true, nil }
+    if os.IsNotExist(err) { return false, nil }
+    return false, err
 }
