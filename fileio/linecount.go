@@ -17,19 +17,31 @@ func GetLineCount(p string) (i int) {
 		PrintErr(err)
 	}
 
-	// var c int
+	w := 0
+	t := make(chan int)
 	for _, file := range files {
 		fn := file.Name()
 		fp := path.Join(p, fn)
 		switch {
 		case file.IsDir():
-			i = i + GetLineCount(fp)
+			w = w + 1
+			go func() {
+				t <- GetLineCount(fp)
+			}()
 		case strings.HasSuffix(fn, ext):
-			c := ReadLineCount(fp)
-			i = i + c
-			fmt.Printf("File Path %s has %d\n", fn, c)
+			w = w + 1
+			go func() {
+				c := ReadLineCount(fp)
+				fmt.Printf("File Path %s has %d\n", fp, c)
+				t <- c
+			}()
 		}
 	}
+
+	for j := 0; j < w; j++ {
+		i = i + <-t
+	}
+	close(t)
 	return
 }
 
@@ -39,8 +51,6 @@ func ReadLineCount(f string) (i int) {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		// t := scanner.Text()
-		// fmt.Printf("\t\tText==%s\n", t)
 		i = i + 1
 	}
 	return i
