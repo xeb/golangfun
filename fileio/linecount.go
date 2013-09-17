@@ -1,6 +1,7 @@
 package fileio
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -16,17 +17,33 @@ func GetLineCount(p string) (i int) {
 		PrintErr(err)
 	}
 
+	// var c int
 	for _, file := range files {
 		fn := file.Name()
+		fp := path.Join(p, fn)
 		switch {
 		case file.IsDir():
-			i = i + GetLineCount(path.Join(p, fn))
+			i = i + GetLineCount(fp)
 		case strings.HasSuffix(fn, ext):
-			i = i + 1
-			fmt.Printf("File Path %s\n", fn)
+			c := ReadLineCount(fp)
+			i = i + c
+			fmt.Printf("File Path %s has %d\n", fn, c)
 		}
 	}
 	return
+}
+
+func ReadLineCount(f string) (i int) {
+	file, _ := os.Open(f)
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		// t := scanner.Text()
+		// fmt.Printf("\t\tText==%s\n", t)
+		i = i + 1
+	}
+	return i
 }
 
 func PrintErr(e error) {
