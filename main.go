@@ -103,8 +103,10 @@ func main() {
 		u = false
 	}
 	if linecount || linecountPath != "" {
+		t0 := time.Now()
 		lc := fileio.GetLineCount(linecountPath)
-		fmt.Printf("Line Count == %d\n", lc)
+		d := time.Now().Sub(t0)
+		fmt.Printf("Line Count == %d (in %s)\n", lc, d)
 		u = false
 	}
 
@@ -274,8 +276,8 @@ func readLineTest() {
 	if exists == false {
 		path = "c:\\cygwin64\\etc\\flowdle\\"
 	}
-	line, e := readLine(fmt.Sprintf("%sclientid", path))
-	fmt.Printf("READ LINE %s (error == %s)", line, e)
+	_, _ = readLine(fmt.Sprintf("%sclientid", path))
+	// fmt.Printf("READ LINE %s (error == %s)", line, e)
 }
 
 func readLine(path string) (string, error) {

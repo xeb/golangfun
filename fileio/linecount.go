@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var ext string = ".go"
+var ext string = ".cs"
 
 func GetLineCount(p string) (i int) {
 	files, err := ioutil.ReadDir(p)
@@ -32,7 +32,7 @@ func GetLineCount(p string) (i int) {
 			w = w + 1
 			go func() {
 				c := ReadLineCount(fp)
-				fmt.Printf("File Path %s has %d\n", fp, c)
+				// fmt.Printf("File Path %s has %d\n", fp, c)
 				t <- c
 			}()
 		}
