@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var ext string = ".cs"
+var ext []string = []string{".cs", ".go", ".java", ".cpp", ".h", ".xml", ".config"}
 
 func GetLineCount(p string) (i int) {
 	files, err := ioutil.ReadDir(p)
@@ -22,19 +22,24 @@ func GetLineCount(p string) (i int) {
 	for _, file := range files {
 		fn := file.Name()
 		fp := path.Join(p, fn)
-		switch {
-		case file.IsDir():
+
+		if file.IsDir() {
 			w = w + 1
 			go func() {
 				t <- GetLineCount(fp)
 			}()
-		case strings.HasSuffix(fn, ext):
-			w = w + 1
-			go func() {
-				c := ReadLineCount(fp)
-				// fmt.Printf("File Path %s has %d\n", fp, c)
-				t <- c
-			}()
+			continue
+		}
+
+		for _, item := range ext {
+			if strings.HasSuffix(fn, item) {
+				w = w + 1
+				go func() {
+					c := ReadLineCount(fp)
+					// fmt.Printf("File Path %s has %d\n", fp, c)
+					t <- c
+				}()
+			}
 		}
 	}
 
