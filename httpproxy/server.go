@@ -11,6 +11,7 @@ import (
 )
 
 var port int = 8093
+var localVirtual string = "/google"
 var portStr string = strconv.Itoa(port)
 var baseUrl string = "http://www.google.com"
 var replacements map[string][]string = map[string][]string{
@@ -20,7 +21,9 @@ var replacements map[string][]string = map[string][]string{
 
 func Start() {
 	http.HandleFunc("/", handleRequest)
-	err := http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", port), nil)
+	address := fmt.Sprintf("0.0.0.0:%d", port)
+	println("Listening on ", address)
+	err := http.ListenAndServe(address, nil)
 	if err != nil {
 		fmt.Printf("ListenAndServe Error :%s\n", err)
 	}
@@ -59,7 +62,11 @@ func writeBody(w http.ResponseWriter, bodyBytes []byte) {
 func handleRequest(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	body, _ := r.Body.(io.ReadCloser)
-	req := newProxyRequest(r.Header, *r.URL, r.Method, body)
+
+	newUrl, _ := url.Parse(strings.Replace(r.URL.String(), localVirtual, "/", 1))
+	fmt.Printf("New Local URL %s\n", newUrl)
+
+	req := newProxyRequest(r.Header, *newUrl, r.Method, body)
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 
