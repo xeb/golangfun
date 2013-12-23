@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var ext []string = []string{".cs", ".go", ".java", ".cpp", ".h", ".xml", ".config"}
+var ext []string = []string{".php", ".html", ".js",".cs", ".go", ".java", ".cpp", ".h", ".xml", ".config"}
 
 func GetLineCount(p string) (i int) {
 	files, err := ioutil.ReadDir(p)
