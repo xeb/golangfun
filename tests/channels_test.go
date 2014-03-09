@@ -2,15 +2,13 @@ package channelsTest
 
 import (
 	"fmt"
-	"testing"
-	//"time"
 	"github.com/xeb/golangfun/channels"
+	"testing"
 )
 
 func TestSimpleChanValue(t *testing.T) {
 
 	value := channels.SimpleChanValue()
-	// t.Fatal("OHNO")
 
 	if value == 1 {
 		t.Fatalf("\n\tBad test case\n")

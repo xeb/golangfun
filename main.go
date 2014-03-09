@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"github.com/xeb/golangfun/channels"
@@ -11,9 +12,8 @@ import (
 	"github.com/xeb/golangfun/lrucache"
 	"github.com/xeb/golangfun/oauth"
 	"github.com/xeb/golangfun/presentation"
-	"sync"
 	"os"
-	"bufio"
+	"sync"
 	"time"
 )
 
@@ -58,7 +58,7 @@ func init() {
 }
 
 func main() {
-	
+
 	readLineTest()
 
 	u := true
@@ -149,12 +149,12 @@ func linkedListSample() {
 
 func interfacesSample() {
 	car := libfun.NewCar()
-	fmt.Printf("Car==%s\n", car)
+	fmt.Printf("Car==%s\n", car.String())
 	car.PeddleToTheMetal()
 	fmt.Println()
 
 	truck := libfun.NewTruck()
-	fmt.Printf("Truck==%s\n", truck)
+	fmt.Printf("Truck==%s\n", truck.String())
 	truck.PeddleToTheMetal()
 	fmt.Println()
 
@@ -259,13 +259,13 @@ func libfunSample() {
 	i := libfun.DeferFun()
 	fmt.Printf("Value of i is %d\n", i)
 
-	account := &libfun.Account{1, "test", time.Now()}
+	account := &libfun.Account{Id: 1, Name: "test", LastLogin: time.Now()}
 	fmt.Println(account.String())
 }
 
 func channelSample() {
 	channels.ReadWriteExample()
-	return
+	// return
 	channels.TimeoutExample()
 	channels.FixedMessagePump()
 }
@@ -293,8 +293,12 @@ func readLine(path string) (string, error) {
 }
 
 func exists(path string) (bool, error) {
-    _, err := os.Stat(path)
-    if err == nil { return true, nil }
-    if os.IsNotExist(err) { return false, nil }
-    return false, err
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }

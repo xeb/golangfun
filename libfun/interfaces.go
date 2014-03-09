@@ -36,6 +36,14 @@ type Vehicle interface {
 	DisplayName() string
 }
 
+func (v Car) String() string {
+	return v.DisplayName()
+}
+
+func (v Truck) String() string {
+	return v.DisplayName()
+}
+
 // -- <implementation of="Vehicle">
 func (car *Car) PeddleToTheMetal() {
 	fmt.Printf("Driving my %s as fast as I can!!!\n", car.makeType)
